@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rock Paper Scissors Game</title>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="style.css">
     <script src="/socket.io/socket.io.js"></script>
     <script src="./client.js"></script>
     <!-- CSS only -->
@@ -14,9 +14,6 @@
 <body>
     <h1 class="container py-4 title">Welcome to Rock, Paper and Scissors game</h1>
     <div id="initial" class="container col-md-6">
-        <img height="200" src="./assets/rock.svg" class="img-responsive px-5 my-3 mx-4" alt="Rock">
-        <img height="200" src="./assets/paper.svg" class="img-responsive px-5 my-3 mx-4" alt="Paper">
-        <img height="200" src="./assets/scissor.svg" class="img-responsive px-5 my-3 mx-4" alt="Scissor">
         <button class="form-control btn btn-primary" onclick="createGame()">Create Game</button> 
         <div class="text-center display-3">or</div>
         <input class="form-control my-2" placeholder="Enter Code" type="text" name="" id="roomUniqueId" />
@@ -27,19 +24,20 @@
 
         </div>
         <div id="gameArea" class="h3 row" style="display: none;">
-            <div class="col-md-6">
                 You:
                 <div id="player1Choice">
                     <button class="rock" onclick="sendChoice('Rock')">Rock</button>
                     <button class="paper" onclick="sendChoice('Paper')">Paper</button>
                     <button class="scissor" onclick="sendChoice('Scissor')">Scissors</button>
                 </div>
-            </div>
-            <div class="col-md-6">
+                <div id="selected-choice"></div>
+            <div class="opponent-selected">
                 Opponent:
+
                 <div id="player2Choice">
                     <p id="opponentState">Waiting for Opponent</p>
                 </div>
+                <div id="opponent-selected-choice"></div>
             </div>
         </div>
         <hr/>

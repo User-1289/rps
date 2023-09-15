@@ -18,6 +18,8 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/client/index.html');
 });
 
+let points = 0;
+let currentPoint = 0;
 io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('disconnect', () => {
@@ -40,6 +42,9 @@ io.on('connection', (socket) => {
     })
 
     socket.on("p1Choice",(data)=>{
+        points = data.point
+        currentPoint = data.currentPoint
+        console.log(data)
         let rpsValue = data.rpsValue;
         rooms[data.roomUniqueId].p1Choice = rpsValue;
         socket.to(data.roomUniqueId).emit("p1Choice",{rpsValue : data.rpsValue});
@@ -59,6 +64,7 @@ io.on('connection', (socket) => {
 });
 
 function declareWinner(roomUniqueId) {
+   // console.log(points, currentPoint)
     let p1Choice = rooms[roomUniqueId].p1Choice;
     let p2Choice = rooms[roomUniqueId].p2Choice;
     let winner = null;
@@ -86,8 +92,12 @@ function declareWinner(roomUniqueId) {
     io.sockets.to(roomUniqueId).emit("result", {
         winner: winner
     });
-    rooms[roomUniqueId].p1Choice = null;
-    rooms[roomUniqueId].p2Choice = null;
+    if(points===currentPoint)
+    {
+        rooms[roomUniqueId].p1Choice = null;
+        rooms[roomUniqueId].p2Choice = null;
+    }
+
 }
 
 server.listen(3000, () => {

@@ -1,9 +1,10 @@
 console.log("client.js executing");
-
+let points = 3
+let nowPoint = 0
 const socket = io();
 let roomUniqueId = null;
 let player1 = false;
-
+let resetInterval;
 function createGame() {
     player1 = true;
     socket.emit('createGame');
@@ -69,20 +70,27 @@ socket.on("result",(data)=>{
     document.getElementById('opponentState').style.display = 'none';
     document.getElementById('opponentButton').style.display = 'block';
     document.getElementById('winnerArea').innerHTML = winnerText;
+    resetInterval = setInterval(reset, 3000);
+
 });
 
 function sendChoice(rpsValue) {
+    nowPoint++
     const choiceEvent= player1 ? "p1Choice" : "p2Choice";
     socket.emit(choiceEvent,{
         rpsValue: rpsValue,
-        roomUniqueId: roomUniqueId
+        roomUniqueId: roomUniqueId,
+        point:points,
+        currentPoint:nowPoint
     });
+    console.log(nowPoint)
     let playerChoiceButton = document.createElement('button');
+    playerChoiceButton.id = "yourbutton"
     playerChoiceButton.style.display = 'block';
     playerChoiceButton.classList.add(rpsValue.toString().toLowerCase());
     playerChoiceButton.innerText = rpsValue;
-    document.getElementById('player1Choice').innerHTML = "";
-    document.getElementById('player1Choice').appendChild(playerChoiceButton);
+    document.getElementById('player1Choice').style.display = 'none'
+    document.getElementById('selected-choice').appendChild(playerChoiceButton);
 }
 
 function createOpponentChoiceButton(data) {
@@ -90,7 +98,21 @@ function createOpponentChoiceButton(data) {
     let opponentButton = document.createElement('button');
     opponentButton.id = 'opponentButton';
     opponentButton.classList.add(data.rpsValue.toString().toLowerCase());
-    opponentButton.style.display = 'none';
+    //opponentButton.style.display = 'none';
     opponentButton.innerText = data.rpsValue;
-    document.getElementById('player2Choice').appendChild(opponentButton);
+    document.getElementById('opponent-selected-choice').appendChild(opponentButton);
+}
+
+function reset()
+{
+    setTimeout(()=>{
+        clearInterval(resetInterval)
+    }, 4000)
+    document.getElementById("selected-choice").style.display='none'
+    document.getElementById("opponentButton").style.display = 'none'
+    document.getElementById("player1Choice").style.display = 'block'
+    document.getElementById("player2Choice").style.display = 'none'
+  //  document.getElementById('opponentButton').style.display = 'none';
+    document.getElementById('opponent-selected-choice').style.display = 'none';
+    document.getElementById('winnerArea').style.display='none'
 }
