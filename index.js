@@ -18,8 +18,6 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/client/index.html');
 });
 
-let points = 0;
-let currentPoint = 0;
 io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('disconnect', () => {
@@ -27,7 +25,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('createGame', () => {
-        const roomUniqueId = makeid(6);
+        const roomUniqueId = makeid(3);
         rooms[roomUniqueId] = {};
         socket.join(roomUniqueId);
         socket.emit("newGame", {roomUniqueId: roomUniqueId})
@@ -42,9 +40,6 @@ io.on('connection', (socket) => {
     })
 
     socket.on("p1Choice",(data)=>{
-        points = data.point
-        currentPoint = data.currentPoint
-        console.log(data)
         let rpsValue = data.rpsValue;
         rooms[data.roomUniqueId].p1Choice = rpsValue;
         socket.to(data.roomUniqueId).emit("p1Choice",{rpsValue : data.rpsValue});
@@ -64,7 +59,6 @@ io.on('connection', (socket) => {
 });
 
 function declareWinner(roomUniqueId) {
-   // console.log(points, currentPoint)
     let p1Choice = rooms[roomUniqueId].p1Choice;
     let p2Choice = rooms[roomUniqueId].p2Choice;
     let winner = null;
@@ -92,12 +86,8 @@ function declareWinner(roomUniqueId) {
     io.sockets.to(roomUniqueId).emit("result", {
         winner: winner
     });
-    if(points===currentPoint)
-    {
-        rooms[roomUniqueId].p1Choice = null;
-        rooms[roomUniqueId].p2Choice = null;
-    }
-
+    rooms[roomUniqueId].p1Choice = null;
+    rooms[roomUniqueId].p2Choice = null;
 }
 
 server.listen(3000, () => {
@@ -106,7 +96,7 @@ server.listen(3000, () => {
 
 function makeid(length) {
     var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var characters       = '0123456789';
     var charactersLength = characters.length;
     for ( var i = 0; i < length; i++ ) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
